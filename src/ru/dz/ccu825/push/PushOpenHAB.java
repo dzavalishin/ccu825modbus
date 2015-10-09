@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import ru.dz.ccu825.CCU825Test;
 import ru.dz.ccu825.payload.CCU825SysInfo;
 import ru.dz.ccu825.payload.ICCU825SysInfo;
+import ru.dz.openhab.AbstractPushOpenHab;
 
 /**
  * Push data to OpenHAB instance with http requests.
@@ -23,11 +24,7 @@ import ru.dz.ccu825.payload.ICCU825SysInfo;
  *
  */
 
-public class PushOpenHAB {
-	private final static Logger log = Logger.getLogger(PushOpenHAB.class.getName());
-
-	private final String openHABHostName;
-	//private String openHABHostName = "localhost";
+public class PushOpenHAB extends AbstractPushOpenHab {
 
 	private String chargeItemName;
 
@@ -35,7 +32,7 @@ public class PushOpenHAB {
 	
 	
 	public PushOpenHAB( String openHABHostName ) {
-		this.openHABHostName = openHABHostName;
+		super(openHABHostName);
 	}
 
 
@@ -72,47 +69,6 @@ public class PushOpenHAB {
 	}
 
 
-	/**
-	 * Not supposed to be used from outside. Public for unit test. 
-	 * @param name Item name
-	 * @param string Item value to send
-	 * @throws IOException 
-	 */
-	public void sendValue(String name, String string) throws IOException {
-		try {
-			URL url = makeUrl(name,string);
-			callUrl(url);
-		} catch(IOException e)
-		{
-			log.severe("IO Error: "+e.getMessage());
-			throw e;
-		}
-	}
-
-
-	private void callUrl(URL url) throws IOException 
-	{
-		URLConnection yc = url.openConnection();
-
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(yc.getInputStream()));
-
-		String inputLine;
-
-		while ((inputLine = in.readLine()) != null) 
-		{
-			log.finest("callUrl="+inputLine);
-			System.out.println(inputLine);
-		}
-		
-		in.close();
-	}
-
-
-	private URL makeUrl(String name, String value) throws MalformedURLException {
-		return new URL("http", openHABHostName, 8080, String.format("/CMD?%s=%s ", name, value ) );
-		//return new URL( String.format("http://%s:8080/CMD?%s=%s ", openHABHostName, name, value ) );
-	}
 
 
 	public void setDefaultItemNames() 
@@ -125,10 +81,6 @@ public class PushOpenHAB {
 		chargeItemName = "CCU825_Battery_Charge";
 	}
 
-
-	public String getOpenHABHostName() {
-		return openHABHostName;
-	}
 	
 	
 	public String getChargeItemName() {

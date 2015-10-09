@@ -136,7 +136,8 @@ public class CCU825_j2mod_connector implements IModBusConnection {
 		
 		trans.setRequest(req);
 		
-		req.setHeadless(trans instanceof ModbusSerialTransaction);
+		//req.setHeadless(trans instanceof ModbusSerialTransaction);
+		req.setHeadless(true); // Modbus over IP is just tunneling
 		
 		if (Modbus.debug)
 			System.out.println("Request: " + req.getHexMessage());
@@ -150,21 +151,26 @@ public class CCU825_j2mod_connector implements IModBusConnection {
 		}
 
 
-		ModbusResponse res = trans.getResponse();
+		ModbusResponse res = trans.getResponse();		
 		
-		if (Modbus.debug) {
+		if (Modbus.debug) 
+		{
 			if (res != null)
 				System.out.println("Response: " + res.getHexMessage());
 			else
 				System.err.println("No response to ReadWriteMultiple request.");
 		}
 		
+		if (res == null) throw new CCU825ProtocolException("Empty or no reply");
+		
 		if (res instanceof ExceptionResponse) {
 			ExceptionResponse exception = (ExceptionResponse) res;
 			throw new CCU825ProtocolException(exception.toString());
 		}
 		
-		//if (! (res instanceof ReadMultipleRegistersResponse))			return;
+		if (! (res instanceof ReadWriteMultipleResponse))			
+			throw new CCU825ProtocolException("Unexpected reply type "+res.getClass());;
+		
 		
 		ReadWriteMultipleResponse data = (ReadWriteMultipleResponse) res;
 		

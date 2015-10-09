@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ru.dz.ccu825.util.RC4;
+import ru.dz.crc.RC4;
 
 public class rc4test {
 

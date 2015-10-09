@@ -19,6 +19,7 @@ import ru.dz.mercury.pkt.ChannelTestPacket;
 import ru.dz.mercury.pkt.Packet;
 import ru.dz.mercury.pkt.ParameterReadRequestPacket;
 import ru.dz.mercury.pkt.ParameterWriteRequestPacket;
+import ru.dz.openhab.AbstractPushOpenHab;
 
 
 /**
@@ -41,6 +42,8 @@ public class Mercury230Connection
 	/** Power metering data contain special info in hight bits. */
 	private static final byte P_MASK = 0x3F;  
 
+	//private ISimpleBytePipe pipe;
+
 	private String hostName;
 	private int port;
 
@@ -49,11 +52,33 @@ public class Mercury230Connection
 	private Socket clientSocket;
 	private byte netAddress = 0; // broadcast
 
+	private boolean isSilent = false;
+
+	private int nError = 0;
+	private final static int MAX_ERROR = 20;
+
 	public String getHostName() {		return hostName;	}
 	public void setHostName(String hostName) {		this.hostName = hostName;	}
 	public int getPort() {		return port;	}
 	public void setPort(int port) {		this.port = port;	}
 
+	private boolean getSilent() {
+		return isSilent;
+	}
+
+	private void setSilent(boolean b) {
+		this.isSilent = b;
+	}
+
+	private boolean isOk() 
+	{
+		return nError < MAX_ERROR;
+	}
+
+	private void resetErrorCounter() {
+		nError = 0;
+	}
+	
 	public void connect() throws UnknownHostException, IOException
 	{
 
@@ -135,12 +160,16 @@ public class Mercury230Connection
 	public void setNetAddress(byte netAddress) {
 		this.netAddress = netAddress;
 	}
+
 	public Packet readPacket() throws Mercury230CRCException, IOException, Mercury230ProtocolTimeoutException
 	{
 		int pos = 0;
 		byte[] ans = new byte[MAX_PKT_LEN];
 
 		try{
+
+			// for timeout to work
+			ans[pos++] = (byte) readByte();
 
 			while( is.available() > 0 )
 			{
@@ -152,7 +181,7 @@ public class Mercury230Connection
 			// It's ok, timeout means we have a packet
 		}
 
-		if( pos == 0 )
+		if( pos < 2 )
 			throw new Mercury230ProtocolTimeoutException();
 		//throw new Mercury230UnexpectedPacketException(ans, "zero length packet")
 
@@ -170,10 +199,10 @@ public class Mercury230Connection
 	public Packet readNonRcPacket() throws Mercury230ProtocolException, IOException
 	{
 		Packet pkt = readPacket();
-		
+
 		if(pkt.isReturnCodePacket())
 			throw new Mercury230ProtocolException("Got rc="+pkt.getReturnCode());
-		
+
 		return pkt;
 	}
 
@@ -187,16 +216,22 @@ public class Mercury230Connection
 	}
 
 
-	
+
 	public void sendPacked(Packet p) throws IOException
 	{
+		sleep(getNextPktTimeout());
+
+		drainInput();
+
 		p.setAddress(netAddress);
 		byte[] toSend = p.getPacketBytes();
 
 		if(dumpPacketData) CCU825Test.dumpBytes("send pkt", toSend);
 
-		for( byte b : toSend )
-			sendByte(b);
+		//for( byte b : toSend )			sendByte(b);
+
+		os.write(toSend, 0, toSend.length);
+
 
 		sleep(getSendPktEndTimeout());
 		sleep(getNextPktTimeout());
@@ -237,7 +272,7 @@ public class Mercury230Connection
 		byte [] a = new byte[1];
 		sendPacked(new ParameterWriteRequestPacket(Packet.PKT_W_PARAM_ADDDRESS, a));
 	}
-	
+
 
 	// ---------------------------------------------------------------------------
 	//
@@ -294,59 +329,35 @@ public class Mercury230Connection
 		}
 	}
 
-	@SuppressWarnings("unused")
-	public static void main(String[] args) throws UnknownHostException, IOException, Mercury230ProtocolException {
-		Mercury230Connection c = new Mercury230Connection();
-
-		if(false)
-		{
-			c.setHostName("etherwan.");
-			c.setPort(604);
-		} else {
-			c.setHostName("moxa.");
-			c.setPort(4002);
-		}
-		c.connect();
-
-		c.ping();
-		c.openChannel(1, "\1\1\1\1\1\1");
-
-		int addr = c.readDeviceAddress();
-		System.out.println("Device address = "+addr);
-
-		(new MercuryFreq(c)).dump();
-		(new MercuryInfo(c)).dump();
-		
-		
-		while(true)
-			getInstantPowerValues(c);
-
-		//while(true)			c.ping();
-
-	}
-
-	private static void getInstantPowerValues(Mercury230Connection c) throws Mercury230CRCException, Mercury230ProtocolTimeoutException 
+	void getInstantPowerValues(AbstractPushOpenHab pusher) throws Mercury230CRCException, Mercury230ProtocolTimeoutException 
 	{
 
 		try {
-			
-			MercuryIV iv = new MercuryIV(c);			
+
+			MercuryIV iv = new MercuryIV(this);			
 			//MercuryPower power = new MercuryPower(this);
-			MercuryActivePower power = new MercuryActivePower(c);
-			MercuryEnergy energy = new MercuryEnergy(c);
+			MercuryActivePower power = new MercuryActivePower(this);
+			MercuryEnergy energy = new MercuryEnergy(this);
 
-			iv.dump();
-			power.dump();			
-			energy.dump();
+			if( !isSilent )
+			{
+				iv.dump();
+				power.dump();			
+				energy.dump();
+			}
 
+			//pusher.sendValue("activePower", power.getTotalP() );
+			//pusher.sendValue("currentVoltage", iv.getV()[0] );
 
+			pusher.sendValue("activePower", Integer.toString( (int)power.getTotalP() ) );
+			pusher.sendValue("currentVoltage", Integer.toString( (int)iv.getV()[0] ) );
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			nError++;
 			e.printStackTrace();
 		} // Current
 		catch (Mercury230ProtocolException e) {
-			// TODO Auto-generated catch block
+			nError++;
 			e.printStackTrace();
 		}
 
@@ -396,7 +407,65 @@ public class Mercury230Connection
 	}
 
 
-	
+
+
+	@SuppressWarnings("unused")
+	public static void main(String[] args) throws UnknownHostException, IOException, Mercury230ProtocolException {
+
+		AbstractPushOpenHab pusher = new AbstractPushOpenHab("smart."); 		
+		Mercury230Connection c = new Mercury230Connection();
+
+
+		for( String arg : args )
+		{
+			if( arg.equalsIgnoreCase("-silent") )
+				c.setSilent(true);
+		}
+
+		if(true)
+		{
+			c.setHostName("etherwan.");
+			c.setPort(604);
+		} else {
+			c.setHostName("moxa.");
+			c.setPort(4002);
+		}
+
+		while(true)
+		{
+
+			c.connect();
+
+			for(int i = 0; i < 1; i++)
+			{
+				c.ping();
+				c.sleep(200);
+			}
+
+			c.openChannel(1, "\1\1\1\1\1\1");
+
+			if( !c.getSilent() )
+			{
+				int addr = c.readDeviceAddress();
+				System.out.println("Device address = "+addr);
+
+				(new MercuryFreq(c)).dump();
+				(new MercuryInfo(c)).dump();
+			}
+
+			while(c.isOk())
+			{
+				c.getInstantPowerValues(pusher);			
+			}
+
+			c.disconnect();
+			c.resetErrorCounter();
+		}
+
+	}
+
+
+
 	/* зафиксированная энергия. ХЗ, что это.
 
 	sendparameterReadRequestPacket(0x14, 0xF0);
@@ -419,6 +488,6 @@ public class Mercury230Connection
 	packet = readPacket().getPayload();
 	CCU825Test.dumpBytes("Energy T4", packet);
 	 */			
-	
+
 
 }

@@ -11,14 +11,25 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825"/>
         <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.payload"/>
-        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.convert"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.mercury.transport"/>
+        <javaElement handleIdentifier="=dzBinLib/src"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.nm8036"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.mercury.data"/>
         <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.data"/>
-        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.push"/>
-        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.transport"/>
-        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.test"/>
-        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.pkt"/>
         <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.util"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.pkt"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.binutil"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.mercury.pkt"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.test"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;test.ru.dz.ccu825"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.transport"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.mercury"/>
+        <file path="/dzBinLib/.project"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825"/>
+        <file path="/dzBinLib/.classpath"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;test.ru.dz.nm8036"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.convert"/>
+        <javaElement handleIdentifier="=ccu825modbus/src&lt;ru.dz.ccu825.push"/>
     </selectedElements>
 </jardesc>

@@ -70,6 +70,9 @@ package ru.dz.ccu825.test;
 
 import java.io.IOException;
 import java.util.Arrays;
+
+import ru.dz.ccu825.CCU825Test;
+
 import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.io.ModbusRTUTransport;

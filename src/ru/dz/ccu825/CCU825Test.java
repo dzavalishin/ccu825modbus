@@ -1,9 +1,14 @@
 package ru.dz.ccu825;
 
 import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.logging.Logger;
 
+import com.ghgande.j2mod.modbus.Modbus;
+
 import ru.dz.ccu825.data.CCU825ReturnCode;
+import ru.dz.ccu825.payload.CCU825DeviceInfo;
 import ru.dz.ccu825.payload.CCU825SysInfo;
 import ru.dz.ccu825.payload.ICCU825Events;
 import ru.dz.ccu825.payload.ICCU825SysInfo;
@@ -31,16 +36,32 @@ public class CCU825Test
 	static IModBusConnection mc = new CCU825_j2mod_connector();
 	static boolean doPoll = true;
 
+	//public static boolean modbus_debug = false;
+
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {				
+	public static void main(String[] args) 
+	{				
 
+		//testTcp();
+		
+		//System.setProperty("com.ghgande.j2mod.modbus.debug", "true");
+		//System.setProperty("com.ghgande.j2mod.modbus.debug", "false");
+		//System.setProperty("com.ghgande.modbus.debug", "false");
+		
+		// 9600 8N1
+		
 		//Thread.currentThread().setDaemon(false);
-		mc.setDestination("device:com2");
+		//mc.setDestination("device:/dev/com10");
+		
+		mc.setDestination("device://./com10");
+		//mc.setDestination("tcp:192.168.1.142:603");  // Doesnt work yet
+		//mc.setDestination("tcp:192.168.1.145:10001");  // Doesnt work yet
 		//mc.setDestination("tcp:192.168.88.145:4002");  // Doesnt work yet
+		//mc.setDestination("tcp:moxa.:4002");  // Doesnt work yet
 
-		PushOpenHAB oh = new PushOpenHAB("localhost");
+		PushOpenHAB oh = new PushOpenHAB("smart.");
 		oh.setDefaultItemNames();
 
 		ICCU825KeyRing kr = new ArrayKeyRing();
@@ -50,6 +71,7 @@ public class CCU825Test
 
 		CCU825Connection c = new CCU825Connection(mc, kr);
 
+		
 		AbstractRequestLoop loop = new AbstractRequestLoop(c) {
 			
 			@Override
@@ -65,24 +87,25 @@ public class CCU825Test
 		
 		loop.startBlocking();
 		
-		/*
-		while(doPoll)
-		{
-			try {
-				connectAndPoll(c);
-			} catch (CCU825Exception e) {
-				//e.printStackTrace();
-				log.severe(e.getMessage());
-				//System.exit(33);
-			}
-
-			// Reconnect on exception
-
-			c.disconnect();
-		}
-		*/
 		System.exit(0);
 
+	}
+
+
+
+	private static void testTcp() {
+		String m_Address = "192.168.1.145";
+		try {
+			Socket s = new Socket(m_Address, 10001);
+			s.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 
@@ -112,6 +135,8 @@ public class CCU825Test
 
 
 	static int iOut = 0;
+
+	
 	private static void pollDevice(CCU825Connection c) throws CCU825Exception {
 
 		//for( int i = 100; i > 0; i-- )
@@ -133,6 +158,17 @@ public class CCU825Test
 			}
 			//oh.sendSysInfo(si);
 			System.out.println(si);
+			
+			for( Double d : si.getInValue() )
+			{
+				System.out.print(String.format("%.2f ", d));
+			}
+			
+			System.out.println();
+			
+			//CCU825DeviceInfo di = c.getDeviceInfo();
+			//System.out.println( di );
+			
 			
 		}
 	}

@@ -23,7 +23,7 @@ import ru.dz.ccu825.util.CCU825CheckSumException;
 import ru.dz.ccu825.util.CCU825Exception;
 import ru.dz.ccu825.util.CCU825PacketFormatException;
 import ru.dz.ccu825.util.CCU825ProtocolException;
-import ru.dz.ccu825.util.RC4;
+import ru.dz.crc.RC4;
 
 /**
  *
@@ -159,7 +159,7 @@ public class CCU825Connection {
 				if(resend-- <= 0)
 					throw e;
 
-				log.severe("Resend");
+				log.severe("Resend: "+e.toString());
 				continue;
 		}
 		
@@ -255,7 +255,18 @@ public class CCU825Connection {
 		}
 
 		if( tries == 0 ) throw new CCU825Exception("Can't syn");
+/*		
+System.err.println("syn done");
 
+synchronized(this) {
+try {
+	wait(10000);
+} catch (InterruptedException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+}
+}
+*/
 		// 2. req/get deviceInfo
 
 		for( tries = NTRIES; tries > 0; tries-- )
