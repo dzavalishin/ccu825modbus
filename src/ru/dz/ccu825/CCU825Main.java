@@ -58,6 +58,12 @@ public class CCU825Main
 		oh = new PushOpenHAB("smart.");
 		oh.setDefaultItemNames();
 
+		//oh.setInputItemName(8, "CCU825_SunLight"); // Actually on input 5, why 8?
+		//oh.setInputItemName(8, "CCU825_CO2"); // Actually on input 7, why 8?
+
+		oh.setInputItemName(4, "CCU825_SunLight"); // Actually on input 5, why 8?
+		oh.setInputItemName(6, "CCU825_CO2"); // Actually on input 7, why 8?
+		
 		ICCU825KeyRing kr = new ArrayKeyRing();
 
 		CCU825Connection c = new CCU825Connection(mc, kr);

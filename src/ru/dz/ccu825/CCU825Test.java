@@ -15,6 +15,7 @@ import ru.dz.ccu825.payload.ICCU825SysInfo;
 import ru.dz.ccu825.push.PushOpenHAB;
 import ru.dz.ccu825.transport.ArrayKeyRing;
 import ru.dz.ccu825.transport.CCU825_j2mod_connector;
+import ru.dz.ccu825.transport.CCU825_tcp2com_connector;
 import ru.dz.ccu825.transport.EmptyModbusConnector;
 import ru.dz.ccu825.transport.ICCU825KeyRing;
 import ru.dz.ccu825.transport.IModBusConnection;
@@ -33,7 +34,7 @@ public class CCU825Test
 {
 	private final static Logger log = Logger.getLogger(CCU825Test.class.getName());
 
-	static IModBusConnection mc = new CCU825_j2mod_connector();
+	static IModBusConnection mc; // = new CCU825_j2mod_connector();
 	static boolean doPoll = true;
 
 	//public static boolean modbus_debug = false;
@@ -44,6 +45,10 @@ public class CCU825Test
 	public static void main(String[] args) 
 	{				
 
+		mc = new CCU825_tcp2com_connector();
+		mc.setDestination("tcp:192.168.88.128:503");
+
+		
 		//testTcp();
 		
 		//System.setProperty("com.ghgande.j2mod.modbus.debug", "true");
@@ -55,7 +60,7 @@ public class CCU825Test
 		//Thread.currentThread().setDaemon(false);
 		//mc.setDestination("device:/dev/com10");
 		
-		mc.setDestination("device://./com10");
+		//mc.setDestination("device://./com10");
 		//mc.setDestination("tcp:192.168.1.142:603");  // Doesnt work yet
 		//mc.setDestination("tcp:192.168.1.145:10001");  // Doesnt work yet
 		//mc.setDestination("tcp:192.168.88.145:4002");  // Doesnt work yet

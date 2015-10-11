@@ -30,6 +30,10 @@ public class CCU825SysInfoEx extends AbstractSysInfo  {
 		
 	}
 
+	@Override
+	public int getInputsCount() {
+		return N_IN;
+	}
 
 	/**
 	 * Package private constructor, used to decode similar payload in other packets.
@@ -48,9 +52,10 @@ public class CCU825SysInfoEx extends AbstractSysInfo  {
 		inBits = bb.getShort(1);		
 		outBits = bb.get(35);
 		
+		// TODO actually order is wrong - in5 (counting from 1) appears in inValue[8]
 		for( int i = 0; i < N_IN; i++ )
 		{
-			inValue [i] = ((double)bb.getShort(i+3)) * 10.0 / 4095; 
+			inValue [i] = ((double)bb.getShort(i*2+3)) * 10.0 / 4095; 
 		}
 
 		decodeS1(bb.get(36));

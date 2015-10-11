@@ -368,9 +368,10 @@ try {
 	 */
 	public ICCU825Events getEvents() throws CCU825ProtocolException 
 	{
+		//CCU825Packet rp = exchange(new CCU825EventsReqPacket() );
 		CCU825Packet rp = exchange(new CCU825EventsReqPacket() );
 		byte[] packetPayload = rp.getPacketPayload();
-		
+		//System.out.println("pkt type = "+ ((int)packetPayload[0]));
 		switch( packetPayload[0] )
 		{
 		case CCU825Packet.PKT_TYPE_EVENTS:

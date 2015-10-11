@@ -50,4 +50,6 @@ public interface ICCU825SysInfo {
 
 	public abstract boolean isDeviceTemperatureValid();
 
+	public abstract int getInputsCount();
+
 }

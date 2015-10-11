@@ -29,6 +29,11 @@ public class CCU825SysInfo extends AbstractSysInfo  {
 		decodePayload(bb); 		
 	}
 
+	@Override
+	public int getInputsCount() {
+		return N_IN;
+	}
+
 	/**
 	 * Package private constructor, used to decode similar payload in other packets.
 	 * @param bb data to decode, no type byte check!
@@ -52,7 +57,7 @@ public class CCU825SysInfo extends AbstractSysInfo  {
 		
 		for( int i = 0; i < N_IN; i++ )
 		{
-			inValue [i] = ((double)bb.getShort(i+2)) * 10.0 / 4095; 
+			inValue [i] = ((double)bb.getShort(i*2+2)) * 10.0 / 4095; 
 		}
 
 		decodeS1(bb.get(19));
