@@ -65,7 +65,7 @@ public class PushOpenHAB extends AbstractPushOpenHab {
 			//if( v > 0.01 )				System.out.print( String.format("%s = %.2f ", name, v ) );
 		}
 		
-		System.out.println();
+		//System.out.println();
 		
 		if(chargeItemName != null) sendValue( chargeItemName, Byte.toString( si.getBatteryPercentage() ) );
 		

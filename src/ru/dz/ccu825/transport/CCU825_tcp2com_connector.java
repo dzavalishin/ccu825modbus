@@ -126,6 +126,7 @@ public class CCU825_tcp2com_connector implements IModBusConnection {
 		results[offset++] = (byte) ((crc >> 8) & 0xFF);
 
 		try {
+			//ru.dz.binutil.ByteArray.dumpBytes("send pkt", results);
 			s.getOutputStream().write(results);
 		} catch (IOException e) {
 			throw new CCU825ProtocolException(e);
@@ -146,6 +147,9 @@ public class CCU825_tcp2com_connector implements IModBusConnection {
 		if( resp.length == 0 )
 			return null;
 
+		//ru.dz.binutil.ByteArray.dumpBytes("recv pkt", resp);
+
+		
 		crc = ru.dz.crc.CRC16.crc( resp, resp.length-2 );
 
 		if( 

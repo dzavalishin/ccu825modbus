@@ -41,7 +41,9 @@ public class CCU825Main
 		if( true )
 		{
 			mc = new CCU825_tcp2com_connector();
-			mc.setDestination("tcp:192.168.88.128:503");  // Doesnt work yet
+			//mc.setDestination("tcp:192.168.88.128:503"); 
+			mc.setDestination("tcp:192.168.88.130:503"); // rack stand module 
+			//mc.setDestination("tcp:etherwan.:603"); // etherwan port 3 
 		}
 		else
 		{
@@ -61,8 +63,10 @@ public class CCU825Main
 		//oh.setInputItemName(8, "CCU825_SunLight"); // Actually on input 5, why 8?
 		//oh.setInputItemName(8, "CCU825_CO2"); // Actually on input 7, why 8?
 
-		oh.setInputItemName(4, "CCU825_SunLight"); // Actually on input 5, why 8?
-		oh.setInputItemName(6, "CCU825_CO2"); // Actually on input 7, why 8?
+		oh.setInputItemName(4, "CCU825_SunLight"); // Actually on input 5
+		oh.setInputItemName(5, "CCU825_Sound_1"); // In6		
+		oh.setInputItemName(6, "CCU825_CO2"); // Actually on input 7
+		oh.setInputItemName(7, "CCU825_CO2_2"); // Actually on input 8
 		
 		ICCU825KeyRing kr = new ArrayKeyRing();
 
@@ -119,7 +123,7 @@ public class CCU825Main
 		ICCU825Events events = c.getEvents();
 		if(events != null)
 		{
-			System.out.println(events);
+			//System.out.println(events);
 			si = events.getSysInfo();
 		}
 		else
@@ -132,7 +136,7 @@ public class CCU825Main
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//System.out.println(si);
+		//System.out.println(si.getInValue()[5]);
 
 
 	}
