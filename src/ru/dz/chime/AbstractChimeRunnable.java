@@ -2,13 +2,20 @@ package ru.dz.chime;
 
 public abstract class AbstractChimeRunnable implements Runnable {
 
-	private int hr;
-	private int min;
+	protected int hr;
+	protected int min;
+	protected int volumeDb = 100;
 
 	public void setTime( int hr, int min )
 	{
 		this.hr = hr;
 		this.min = min;
+		
+	}
+	
+	public void setVolume( int db )
+	{
+		this.volumeDb = db;
 		
 	}
 	

@@ -91,10 +91,19 @@ public class ChimeRunner implements Runnable
 			System.out.println(String.format("will chime for %02d:%02d", hr, min));
 		
 		chime.setTime( hr, min );		
+		chime.setVolume(getVolume(hr));
 		
 		Thread chimeThread = new Thread( chime );
 		chimeThread.run();
 
+	}
+
+	private int getVolume(int hr) {
+		
+		// -10 db at night
+		if( (hr > 0) && (hr < 10) ) return -10;
+		
+		return 0;
 	}
 
 	private void sleepASecond() 

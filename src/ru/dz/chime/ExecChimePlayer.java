@@ -47,7 +47,9 @@ public class ExecChimePlayer extends AbstractChimeRunnable {
 		Process p;
 		try {
 
-			p = Runtime.getRuntime().exec(rCmd);
+			String gain = String.format( " gain %d", volumeDb );
+			
+			p = Runtime.getRuntime().exec(rCmd+gain);
 			int rc = p.waitFor();
 
 			if( rc != 0 )
