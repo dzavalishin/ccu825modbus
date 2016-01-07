@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class ChimeRunner implements Runnable
 {
-	private static final boolean test = true;
+	private static final boolean test = System.getProperty("ChimeRunnerTest").equalsIgnoreCase("true");
 
 	private AbstractChimeRunnable atHour;
 	private AbstractChimeRunnable atHalf;
@@ -86,6 +86,9 @@ public class ChimeRunner implements Runnable
 		// 12hr mode
 		hr %= 12;
 		if( hr == 0 ) hr = 12; // Do not ring 0 bells :)
+
+		if(test)
+			System.out.println(String.format("will chime for %02d:%02d", hr, min));
 		
 		chime.setTime( hr, min );		
 		
