@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1251" standalone="no"?>
 <jardesc>
-    <jar path="/ccu825modbus/chime.jar"/>
+    <jar path="p:/chime.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/ccu825modbus/ExportJar_Chime.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
