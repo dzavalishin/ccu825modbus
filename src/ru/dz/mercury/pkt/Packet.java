@@ -2,7 +2,7 @@ package ru.dz.mercury.pkt;
 
 import java.util.logging.Logger;
 
-import ru.dz.crc.CRC16;
+import ru.dz.ccu825.util.CRC16;
 import ru.dz.mercury.Mercury230CRCException;
 
 public class Packet {

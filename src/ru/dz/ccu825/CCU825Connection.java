@@ -23,7 +23,6 @@ import ru.dz.ccu825.util.CCU825CheckSumException;
 import ru.dz.ccu825.util.CCU825Exception;
 import ru.dz.ccu825.util.CCU825PacketFormatException;
 import ru.dz.ccu825.util.CCU825ProtocolException;
-import ru.dz.crc.RC4;
 
 /**
  *

@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import ru.dz.crc.CRC16;
+import ru.dz.ccu825.util.CRC16;
 
 public class CRC16Test {
 

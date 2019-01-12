@@ -6,8 +6,8 @@ import java.util.logging.Logger;
 
 import ru.dz.ccu825.util.CCU825CheckSumException;
 import ru.dz.ccu825.util.CCU825PacketFormatException;
-import ru.dz.crc.CRC16;
-import ru.dz.crc.RC4;
+import ru.dz.ccu825.util.CRC16;
+import ru.dz.ccu825.util.RC4;
 
 /**
  * Represents CCU825-SM protocol packet. Does assembly/disassembly.

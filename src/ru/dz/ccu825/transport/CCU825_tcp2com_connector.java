@@ -120,7 +120,7 @@ public class CCU825_tcp2com_connector implements IModBusConnection {
 
 		//int dataLength = 11 + m_WriteCount * 2;
 
-		int crc = ru.dz.crc.CRC16.crc( results, results.length-2 );
+		int crc = ru.dz.ccu825.util.CRC16.crc( results, results.length-2 );
 		
 		results[offset++] = (byte) (crc & 0xFF);
 		results[offset++] = (byte) ((crc >> 8) & 0xFF);
@@ -150,7 +150,7 @@ public class CCU825_tcp2com_connector implements IModBusConnection {
 		//ru.dz.binutil.ByteArray.dumpBytes("recv pkt", resp);
 
 		
-		crc = ru.dz.crc.CRC16.crc( resp, resp.length-2 );
+		crc = ru.dz.ccu825.util.CRC16.crc( resp, resp.length-2 );
 
 		if( 
 				( resp[resp.length-2] != (byte) (crc & 0xFF)) || 
