@@ -11,7 +11,8 @@ import java.util.Date;
  */
 public class ChimeRunner implements Runnable
 {
-	private static final boolean test = System.getProperty("ChimeRunnerTest").equalsIgnoreCase("true");
+	private static final String testProperty = System.getProperty("ChimeRunnerTest");
+	private static final boolean test = testProperty != null ? testProperty.equalsIgnoreCase("true") : false;
 
 	private AbstractChimeRunnable atHour;
 	private AbstractChimeRunnable atHalf;
