@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import ru.dz.ccu825.CCU825Test;
+import ru.dz.ccu825.push.AbstractPushOpenHab;
 import ru.dz.mercury.data.MercuryActivePower;
 import ru.dz.mercury.data.MercuryEnergy;
 import ru.dz.mercury.data.MercuryFixed;
@@ -19,7 +20,7 @@ import ru.dz.mercury.pkt.ChannelTestPacket;
 import ru.dz.mercury.pkt.Packet;
 import ru.dz.mercury.pkt.ParameterReadRequestPacket;
 import ru.dz.mercury.pkt.ParameterWriteRequestPacket;
-import ru.dz.openhab.AbstractPushOpenHab;
+
 
 
 /**
@@ -412,7 +413,11 @@ public class Mercury230Connection
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws UnknownHostException, IOException, Mercury230ProtocolException {
 
-		AbstractPushOpenHab pusher = new AbstractPushOpenHab("smart."); 		
+		AbstractPushOpenHab pusher = new AbstractPushOpenHab() {@Override
+		public void sendValue(String name, String value) throws IOException {
+			// TODO Auto-generated method stub
+			
+		}}; 		
 		Mercury230Connection c = new Mercury230Connection();
 
 

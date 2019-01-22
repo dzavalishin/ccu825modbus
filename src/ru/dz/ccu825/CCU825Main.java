@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import ru.dz.ccu825.data.CCU825ReturnCode;
 import ru.dz.ccu825.payload.ICCU825Events;
 import ru.dz.ccu825.payload.ICCU825SysInfo;
+import ru.dz.ccu825.push.AbstractPushOpenHab;
+import ru.dz.ccu825.push.PushMqttUdp;
 import ru.dz.ccu825.push.PushOpenHAB;
 import ru.dz.ccu825.transport.ArrayKeyRing;
 import ru.dz.ccu825.transport.CCU825_j2mod_connector;
@@ -13,6 +15,8 @@ import ru.dz.ccu825.transport.CCU825_tcp2com_connector;
 import ru.dz.ccu825.transport.ICCU825KeyRing;
 import ru.dz.ccu825.transport.IModBusConnection;
 import ru.dz.ccu825.util.CCU825Exception;
+import ru.dz.openhab.IPushData;
+
 
 /**
  * 
@@ -29,7 +33,8 @@ public class CCU825Main
 	//static IModBusConnection mc = new CCU825_tcp2com_connector();
 	static IModBusConnection mc;
 	static boolean doPoll = true;
-	static PushOpenHAB oh;
+	//static PushOpenHAB push;
+	static AbstractPushOpenHab push;
 
 	/**
 	 * @param args
@@ -38,14 +43,14 @@ public class CCU825Main
 
 		//System.setProperty("com.ghgande.j2mod.modbus.debug", "true");
 
-		if( true )
+		//if( true )
 		{
 			mc = new CCU825_tcp2com_connector();
 			//mc.setDestination("tcp:192.168.88.128:503"); 
 			mc.setDestination("tcp:192.168.88.130:503"); // rack stand module 
 			//mc.setDestination("tcp:etherwan.:603"); // etherwan port 3 
 		}
-		else
+		/*else
 		{
 		// 9600 8N1
 		mc = new CCU825_j2mod_connector();
@@ -55,18 +60,19 @@ public class CCU825Main
 
 		mc.setDestination("device://./com10");
 		//mc.setDestination("tcp:192.168.1.142:603");  // Doesnt work yet
-		}
+		}*/
 
-		oh = new PushOpenHAB("smart.");
-		oh.setDefaultItemNames();
+		//push = new PushOpenHAB("smart.");
+		push = new PushMqttUdp();
+		push.setDefaultItemNames();
 
 		//oh.setInputItemName(8, "CCU825_SunLight"); // Actually on input 5, why 8?
 		//oh.setInputItemName(8, "CCU825_CO2"); // Actually on input 7, why 8?
 
-		oh.setInputItemName(4, "CCU825_SunLight"); // Actually on input 5
-		oh.setInputItemName(5, "CCU825_Sound_1"); // In6		
-		oh.setInputItemName(6, "CCU825_CO2"); // Actually on input 7
-		oh.setInputItemName(7, "CCU825_CO2_2"); // Actually on input 8
+		push.setInputItemName(4, "CCU825_SunLight"); // Actually on input 5
+		push.setInputItemName(5, "CCU825_Sound_1"); // In6		
+		push.setInputItemName(6, "CCU825_CO2"); // Actually on input 7
+		push.setInputItemName(7, "CCU825_CO2_2"); // Actually on input 8
 		
 		ICCU825KeyRing kr = new ArrayKeyRing();
 
@@ -131,7 +137,7 @@ public class CCU825Main
 			si = c.getSysInfo();
 		}
 		try {
-			oh.sendSysInfo(si);
+			push.sendSysInfo(si);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

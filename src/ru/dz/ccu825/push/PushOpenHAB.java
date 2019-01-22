@@ -14,7 +14,7 @@ import ru.dz.ccu825.CCU825Test;
 import ru.dz.ccu825.payload.CCU825SysInfo;
 import ru.dz.ccu825.payload.CCU825SysInfoEx;
 import ru.dz.ccu825.payload.ICCU825SysInfo;
-import ru.dz.openhab.AbstractPushOpenHab;
+
 
 /**
  * Push data to OpenHAB instance with http requests.
@@ -27,79 +27,69 @@ import ru.dz.openhab.AbstractPushOpenHab;
 
 public class PushOpenHAB extends AbstractPushOpenHab {
 
-	private String chargeItemName;
 
 	
 	
+
+
+
+	
+	
+	
+	private final String openHABHostName;
 	
 	public PushOpenHAB( String openHABHostName ) {
-		super(openHABHostName);
+		this.openHABHostName = openHABHostName;
 	}
+	
 
-
-	private static final Map<Integer,String> items = new HashMap<Integer,String>();
-
+	public String getOpenHABHostName() {
+		return openHABHostName;
+	}
+	
+	
 	/**
-	 * Map CCU825 input to named OpenHAB item. 
-	 * @param input CCU825 input number, 0-15
-	 * @param itemName OpehNAB item to translate data to
+	 * Not supposed to be used from outside. Public for unit test. 
+	 * @param name Item name
+	 * @param value Item value to send
+	 * @throws IOException 
 	 */
-	public void setInputItemName( int input, String itemName )
-	{
-		items.put(input, itemName);
+	public void sendValue(String name, String value) throws IOException {
+		try {
+			URL url = makeUrl(name,value);
+			callUrl(url);
+		} catch(IOException e)
+		{
+			log.severe("IO Error: "+e.getMessage());
+			throw e;
+		}
 	}
 
 
-	public void sendSysInfo( ICCU825SysInfo si ) throws IOException
+	private void callUrl(URL url) throws IOException 
 	{
-		int cnt = si.getInputsCount();
-		for( int i = 0; i < cnt; i++ )
-		{
-			String name = items.get(i);
-			if( name == null ) continue;
+		URLConnection yc = url.openConnection();
 
-			double v = si.getInValue()[i];
-			
-			sendValue( name, Double.toString( v ) );
-			//System.out.print( name + "=" + Double.toString( v ) + " " );
-			//if( v > 0.01 )				System.out.print( String.format("%s = %.2f ", name, v ) );
+		BufferedReader in = new BufferedReader(
+				new InputStreamReader(yc.getInputStream()));
+
+		String inputLine;
+
+		while ((inputLine = in.readLine()) != null) 
+		{
+			log.finest("callUrl="+inputLine);
+			System.out.println(inputLine);
 		}
 		
-		//System.out.println();
-		
-		if(chargeItemName != null) sendValue( chargeItemName, Byte.toString( si.getBatteryPercentage() ) );
-		
-		sendValue( "CCU825_Device_Temperature", Byte.toString( si.getDeviceTemperature() ) );
-		sendValue( "CCU825_Power_Voltage", Double.toString( si.getPowerVoltage() ) );
-
-		if( si.isBalanceValid() ) 
-			sendValue( "CCU825_GSM_Balance", Double.toString( si.getGSMBalance() ) );
+		in.close();
 	}
 
 
-
-
-	public void setDefaultItemNames() 
-	{
-		for( int i = 0; i < CCU825SysInfoEx.N_IN; i++ )
-		{
-			setInputItemName(i, String.format( "CCU825_In%d", i) );
-		}
-		
-		chargeItemName = "CCU825_Battery_Charge";
+	private URL makeUrl(String name, String value) throws MalformedURLException {
+		return new URL("http", openHABHostName, 8080, String.format("/CMD?%s=%s ", name, value ) );
+		//return new URL( String.format("http://%s:8080/CMD?%s=%s ", openHABHostName, name, value ) );
 	}
 
 	
-	
-	public String getChargeItemName() {
-		return chargeItemName;
-	}
-
-
-	public void setChargeItemName(String chargeItemName) {
-		this.chargeItemName = chargeItemName;
-	}
-
-
 
 }
